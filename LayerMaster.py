@@ -31,6 +31,32 @@ PRINTDEBUGDEEPER = False
 #determines direction of slash for windows or linux system
 slash = ('\\' if os.name == 'nt' else '/')
 
+def load_in_terms(rootdata, tfidf_root, master_filename, stopwords_filename, certain_match_words):
+    global terms
+    global stopwords
+    global master
+    global cmw
+    print("Loading in dictionaries from directory DATA/")
+    master = helpers.open_file(rootdata + master_filename)
+    cmw = helpers.open_file(rootdata + certain_match_words)
+    stopwords = helpers.open_file(rootdata + stopwords_filename)
+
+    for subdir, dirs, files in os.walk(rootdata + tfidf_root):
+        #the if is to prevent the code from entering the historical logs to search
+        #for matches, since we only care about the current... currently
+        historical = 'historical'
+        if subdir == rootdata + tfidf_root + 'FAILED':
+            continue
+        if subdir[-len(historical):] == historical:
+            continue
+        for file in files:
+            terms[os.path.join(subdir, file)] = helpers.open_file(os.path.join(subdir, file))
+    #stopwords = helpers.open_file("stopwords.json")
+    print("Finished Loading in dictionaries")
+
+load_in_terms(f"DATA{slash}", f"TFIDF_DATA{slash}", "master_dictionary.json", "stopwords", "certain_match_words")
+
+
 #points per gram match, scores are modeled off of fibonacci
 # ppg = [3,5,8,13,21]
 ppg = [1,3,7,15,31]
@@ -189,30 +215,6 @@ class noun_phrase:
         self.np = nphrase
         self.matches = list()
 """
-
-def load_in_terms(rootdata, tfidf_root, master_filename, stopwords_filename, certain_match_words):
-    global terms
-    global stopwords
-    global master
-    global cmw
-    print("Loading in dictionaries from directory DATA/")
-    master = helpers.open_file(rootdata + master_filename)
-    cmw = helpers.open_file(rootdata + certain_match_words)
-    stopwords = helpers.open_file(rootdata + stopwords_filename)
-
-    for subdir, dirs, files in os.walk(rootdata + tfidf_root):
-        #the if is to prevent the code from entering the historical logs to search
-        #for matches, since we only care about the current... currently
-        historical = 'historical'
-        if subdir == rootdata + tfidf_root + 'FAILED':
-            continue
-        if subdir[-len(historical):] == historical:
-            continue
-        for file in files:
-            terms[os.path.join(subdir, file)] = helpers.open_file(os.path.join(subdir, file))
-    #stopwords = helpers.open_file("stopwords.json")
-    print("Finished Loading in dictionaries")
-
 def add_points(points, prob):
     if prob == True or points == True:
         return True
@@ -975,7 +977,6 @@ def categorize(header, summary):
     article = header + " " + summary
     content = helpers.clean_text(article)
     sentences_tagged = helpers.tokenize_content(content)
-    print(sentences_tagged)
 
     #returns a list of noun unigrams, bi and tri from the article
     #grams = helpers.do_grams(article)
@@ -986,9 +987,6 @@ def categorize(header, summary):
         all_np += noun_phrases
     #will use these to searh through the LAYER_SEARCH
     all_proper_np = get_all_proper_np_from_all_np(all_np)
-    print(all_proper_np)
-    print("hereh biy")
-    quit()
 
     """("==============LAYER_SEARCH================")"""
     """
@@ -1062,25 +1060,8 @@ def categorize(header, summary):
 
     return tags
 
-def tester_get_article_from_LabelsFiles():
-    for filename in glob.glob(f'Labels{slash}*.txt'):
-        with open(os.path.join(os.getcwd(), filename), 'r') as f:
-            print(filename)
-            all = f.read()
-            articles = all.split(A_TOK)
-            for article in articles:
-                if len(article) <= 10:# or "Baylor breaks" not in article:
-                    continue
-                header, summary = article.split(H_TOK)
-                header = header.strip()
-                summary = summary.strip() #len(summary) = 0 when there isn't one provided
-
-                tags = categorize(header, summary)
-                print(f"Tags: {tags}")
-                print("=====================================================================\n")
 def main():
-    load_in_terms(f"DATA{slash}", f"TFIDF_DATA{slash}", "master_dictionary.json", "stopwords", "certain_match_words")
-    tester_get_article_from_LabelsFiles()
+    print(categorize("What a wild weekend for the New England Patriots.", "Tom Brady had a massive game throwing the football today."))
 
 if __name__ == "__main__":
     main()
