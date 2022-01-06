@@ -1,6 +1,7 @@
 Overall:
   LayerMaster.py - contains the function "categorize(header, summary)" that tags an incoming article. This is what will be called 
-    in order to categorize all articles.
+    in order to categorize all articles. It returns a list of sports that the article matched with. Almost always of size 1, can be
+    multiple or 0 when it was unable to determine or it determined it an article that isn't of interest.
   
   helpers.py     - contains helper functions that LayerMaster.py and other scripts use
   
