@@ -9,7 +9,7 @@ setuptools.setup(
     name="newstagger",
     version="0.0.1",
     author="scrimmage",
-    author_email="and.capuano@gmail.com",
+    author_email="matthewdever1@gmail.com",
     description="Package to update Scrimmage newsfeed's tags",
     long_description=long_description,
     url="https://github.com/Scrimmage-co/NewsTagger",
