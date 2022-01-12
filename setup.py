@@ -14,6 +14,9 @@ setuptools.setup(
     long_description=long_description,
     url="https://github.com/Scrimmage-co/NewsTagger",
     packages=setuptools.find_packages(),
+    install_requires=[
+          'unidecode',
+      ],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
