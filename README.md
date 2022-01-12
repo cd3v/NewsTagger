@@ -1,12 +1,12 @@
 Overall:
   When a news article comes in, it contains a header and a summary that needs to be tagged.
-  To Tag, call the function categorize with arguments "header" and "summary" that is within the file LayerMaster.py
+  To Tag, call the function categorize with arguments "header" and "summary" that is within the file layermaster.py
   
-  LayerMaster.py - contains the function "categorize(header, summary)" that tags an incoming article. This is what will be called 
+  layermaster.py - contains the function "categorize(header, summary)" that tags an incoming article. This is what will be called 
     in order to categorize all articles. It returns a list of sports that the article matched with. Almost always just 1 tag, but can be
     multiple or 0 when it was unable to determine or it determined it an article that isn't of interest.
   
-  helpers.py     - contains helper functions that LayerMaster.py and other scripts use
+  helpers.py     - contains helper functions that layermaster.py and other scripts use
   
   temp_update_roster.py - used to automatically update the rosters of all teams in each of the discussed leagues. 
     To use, go to the main of the script and uncomment "make_hisorical_copy()" in order to make a save copy that 

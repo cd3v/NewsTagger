@@ -6,6 +6,8 @@ import re
 import glob
 from os.path import exists
 
+basedir = os.path.abspath(os.path.dirname(__file__))
+
 #load in the dictionary that contains the rosters
 
 #for layer_lookup
@@ -37,9 +39,9 @@ def load_in_terms(rootdata, tfidf_root, master_filename, stopwords_filename, cer
     global master
     global cmw
     print("Loading in dictionaries from directory DATA/")
-    master = open_file(rootdata + master_filename)
-    cmw = open_file(rootdata + certain_match_words)
-    stopwords = open_file(rootdata + stopwords_filename)
+    master = open_file(os.path.join(basedir, rootdata) + master_filename)
+    cmw = open_file(os.path.join(basedir, rootdata) + certain_match_words)
+    stopwords = open_file(os.path.join(basedir, rootdata) + stopwords_filename)
 
     for subdir, dirs, files in os.walk(rootdata + tfidf_root):
         #the if is to prevent the code from entering the historical logs to search
