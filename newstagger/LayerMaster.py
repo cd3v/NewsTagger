@@ -1,4 +1,4 @@
-from . import helpers
+from newstagger import helpers
 import os
 import copy
 import nltk
