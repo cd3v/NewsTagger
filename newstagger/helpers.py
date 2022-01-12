@@ -7,7 +7,7 @@ import nltk
 
 from pathlib import Path
 from datetime import datetime
-from nltk.corpus import stopwords
+# from nltk.corpus import stopwords
 
 
 """
@@ -16,7 +16,7 @@ keep this file in the same directory as whatever scripts are using it
 ***********************************************
 """
 
-stop_words = set(stopwords.words('english')) #words like, 'the', 'us'...
+# stop_words = set(stopwords.words('english')) #words like, 'the', 'us'...
 #nouns isn't used for index to dictionary like it is in wiki_scrape_href to
 #get to the correct dictionary, but to keep things consistent I am using the
 #len(nouns) instead of simply saying 3
