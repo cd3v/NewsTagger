@@ -55,8 +55,8 @@ def load_in_terms(rootdata, tfidf_root, master_filename, stopwords_filename, cer
     print("Finished Loading in dictionaries")
 
 load_in_terms(
-    f"./DATA{slash}",
-    f"./DATA/TFIDF_DATA{slash}",
+    f"/DATA{slash}",
+    f"/DATA/TFIDF_DATA{slash}",
     "master_dictionary.json",
     "stopwords",
     "certain_match_words"
