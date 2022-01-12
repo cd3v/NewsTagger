@@ -1,4 +1,4 @@
-from newstagger import helpers
+from .helpers import *
 import os
 import copy
 import nltk
@@ -37,9 +37,9 @@ def load_in_terms(rootdata, tfidf_root, master_filename, stopwords_filename, cer
     global master
     global cmw
     print("Loading in dictionaries from directory DATA/")
-    master = helpers.open_file(rootdata + master_filename)
-    cmw = helpers.open_file(rootdata + certain_match_words)
-    stopwords = helpers.open_file(rootdata + stopwords_filename)
+    master = open_file(rootdata + master_filename)
+    cmw = open_file(rootdata + certain_match_words)
+    stopwords = open_file(rootdata + stopwords_filename)
 
     for subdir, dirs, files in os.walk(rootdata + tfidf_root):
         #the if is to prevent the code from entering the historical logs to search
@@ -50,8 +50,8 @@ def load_in_terms(rootdata, tfidf_root, master_filename, stopwords_filename, cer
         if subdir[-len(historical):] == historical:
             continue
         for file in files:
-            terms[os.path.join(subdir, file)] = helpers.open_file(os.path.join(subdir, file))
-    #stopwords = helpers.open_file("stopwords.json")
+            terms[os.path.join(subdir, file)] = open_file(os.path.join(subdir, file))
+    #stopwords = open_file("stopwords.json")
     print("Finished Loading in dictionaries")
 
 load_in_terms(f"DATA{slash}", f"TFIDF_DATA{slash}", "master_dictionary.json", "stopwords", "certain_match_words")
@@ -975,15 +975,15 @@ def detect_and_correct_all_upper(header):
 def categorize(header, summary):
     header = detect_and_correct_all_upper(header)
     article = header + " " + summary
-    content = helpers.clean_text(article)
-    sentences_tagged = helpers.tokenize_content(content)
+    content = clean_text(article)
+    sentences_tagged = tokenize_content(content)
 
     #returns a list of noun unigrams, bi and tri from the article
-    #grams = helpers.do_grams(article)
+    #grams = do_grams(article)
     #print(grams)
     all_np = list()
     for st in sentences_tagged:
-        noun_phrases = helpers.generate_noun_phrase_possibilities(st)
+        noun_phrases = generate_noun_phrase_possibilities(st)
         all_np += noun_phrases
     #will use these to searh through the LAYER_SEARCH
     all_proper_np = get_all_proper_np_from_all_np(all_np)
