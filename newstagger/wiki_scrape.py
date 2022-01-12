@@ -17,7 +17,7 @@ import threading
 import statistics
 import os
 from scipy.stats import norm
-from nltk.corpus import stopwords
+# from nltk.corpus import stopwords
 #from bs4 import BeautifulSoup
 from argparse import ArgumentParser
 
@@ -27,7 +27,7 @@ how data is being formatted
 'word':[[count, percentile, % makeup], [count, percentile, % makeup]]
 """
 results = {'unigram':dict(), 'bigram':dict(), 'trigram':dict()}
-stop_words = set(stopwords.words('english')) #words like, 'the', 'us'...
+# stop_words = set(stopwords.words('english')) #words like, 'the', 'us'...
 nouns = ['unigram', 'bigram', 'trigram']
 count = 1
 num_urls = 0
@@ -154,8 +154,8 @@ def fill_results(content, SOURCE_FOR_DEBUGGING):
     tagged = nltk.pos_tag(tokens)
     for word, pos in tagged:
         #it's a junk word
-        if word.lower() in stop_words:
-            continue
+        # if word.lower() in stop_words:
+        #     continue
         """
         can use to get every single word from an article
         I see no use for it currently so I won't be filling in data for it
@@ -172,8 +172,8 @@ def get_noun_counts(content):
     tokens = nltk.word_tokenize(content)
     tagged = nltk.pos_tag(tokens)
     for word, pos in tagged:
-        if word.lower() in stop_words:
-            continue
+        # if word.lower() in stop_words:
+        #     continue
         word_lower = word.lower()
         if word_lower not in results['all']:
             results['all'][word_lower] = [0,0] #upper, lower counts
