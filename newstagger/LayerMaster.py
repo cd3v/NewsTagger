@@ -1,4 +1,4 @@
-import helpers
+from . import helpers
 import os
 import copy
 import nltk
