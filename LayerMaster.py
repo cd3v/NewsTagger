@@ -21,8 +21,8 @@ cmw = dict()
 nouns = ['unigram', 'bigram', 'trigram']
 H_TOK = "<H><H>"
 A_TOK = "<A><A>"
-# PRINTDEBUG = False
-PRINTDEBUG = True
+PRINTDEBUG = False
+# PRINTDEBUG = True
 PRINTDEBUGDEEPER = False
 # PRINTDEBUGDEEPER = True
 
