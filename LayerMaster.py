@@ -21,8 +21,8 @@ cmw = dict()
 nouns = ['unigram', 'bigram', 'trigram']
 H_TOK = "<H><H>"
 A_TOK = "<A><A>"
-PRINTDEBUG = False
-# PRINTDEBUG = True
+# PRINTDEBUG = False
+PRINTDEBUG = True
 PRINTDEBUGDEEPER = False
 # PRINTDEBUGDEEPER = True
 
@@ -107,6 +107,23 @@ class Field:
         #get the highest score (5) instead of 15, this is to prevent leagues
         #with a lot of teams from being over done
 
+    def get_unique_matches(self):
+        unique = list()
+        for cur in self.matched_with:
+            u = True
+            print(cur)
+            for other in self.matched_with:
+                if cur == other:
+                    continue
+                if re.search(r"\b" + re.escape(cur) + r"\b", other):
+                    u = False
+                if not u:
+                    break
+            if u:
+                unique.append(cur)
+        return unique
+
+
 
 """
 These exist for flexibility if I want to provide specific scoring/behaviors to each type
@@ -135,6 +152,7 @@ class Player(Field):
         else:
             self.fn = parts[0]
             self.ln = " ".join(parts[1:])
+
 class TopMatch:
     def __init__(self, id):
         #identifier is unique to each noun phrase
@@ -909,16 +927,19 @@ def get_tags(scores, best_matches, max, probs):
         if scores[s].certain_match == True:
             tags.append(s)
         else:
-            #the sport must have a unique gram in matched with, match with at least 2+ unigrams or bigram+ and be >=75% of the max possible
-            # if scores[s].points >= 2*ppg[0] and scores[s].points/max.sport_points >= .75 and (has_a_unique(scores, s)):
-            if max.sport_points != 0 and scores[s].points/max.sport_points >= .75 and (has_a_unique(scores, s)):
+            unique_matches = scores[s].get_unique_matches()
+            if len(unique_matches) > 1 and max.sport_points != 0 and scores[s].points/max.sport_points >= .75 and (has_a_unique(scores, s)):
                 tags.append(s)
 
     #not flushed out completely, use as final resort to tag
+    maxtup = (0,None)
     if len(tags) == 0:
         for s in probs:
-            if probs[s].max > .3 and s not in tags: #has to be 35% to tag(modify this number to make more accurate)
-                tags.append(s)
+            if probs[s].max > .35 and s not in tags: #has to be 35% to tag(modify this number to make more accurate)
+                if probs[s].max > maxtup[0]:
+                    maxtup = (probs[s].max, s)
+        if maxtup[1] != None:
+            tags.append(maxtup[1])
 
     if PRINTDEBUG:
         print("--------------------------------------------")
@@ -1061,7 +1082,8 @@ def categorize(header, summary):
     return tags
 
 def main():
-    print(categorize("What a wild weekend for the New England Patriots.", "Tom Brady had a massive game throwing the football today."))
+    tags = categorize("", "New Liverpool FC Podcast, Video and Written content from The Anfield Wrap. The Best Liverpool Podcast. The Anfield Wrap places you in the pub on a Friday night as we discuss Liverpool’s Christmas fixture list in the Premier League. Neil Atkinson hosts John")
+    # print(tags)
 
 if __name__ == "__main__":
     main()
