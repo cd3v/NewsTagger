@@ -284,6 +284,9 @@ def get_certain_match_words(all_np, max):
 """
 #returns a dict type with any sports/leagues that are certain matches because a NP matched the file certain_match_words.json
 def get_certain_match_words(content, max):
+    letters2remove = "-()[]{}`':;.?!\""
+    for l2r in letters2remove:
+        content = content.replace(l2r, " ")
     scores = dict()
     for word in cmw:
         if re.search(r"\b" + re.escape(word) + r"\b", content):
@@ -351,7 +354,6 @@ def generate_scores(best_matches, max, scores):
             for t in scores[s].c[l].c:
                 team_matches_inner = scores[s].c[l].c[t].matched_with
                 # print(f"        {t}")
-                #the team didn't match, so that must mean a player name matched
                 for p in scores[s].c[l].c[t].c:
                     player_matches_inner = list()
                     for player_match in scores[s].c[l].c[t].c[p].matched_with:
@@ -363,10 +365,14 @@ def generate_scores(best_matches, max, scores):
                                     max.player_matches.append(player_match)
                                 player_matches_inner.append(player_match)
                         else:
-                            if (scores[s].c[l].c[t].c[p].certain_match or re.search(r"\b" + re.escape(player_match) + r"\b", scores[s].c[l].c[t].c[p].ln)) and player_match not in team_matches_inner:
-                                if player_match not in max.player_matches:
-                                    max.player_matches.append(player_match)
-                                player_matches_inner.append(player_match)
+                            #the try catch is to solve a potential bug that Junior had noticed on the following if statement
+                            try:
+                                if (scores[s].c[l].c[t].c[p].certain_match or re.search(r"\b" + re.escape(player_match) + r"\b", scores[s].c[l].c[t].c[p].ln)) and player_match not in team_matches_inner:
+                                    if player_match not in max.player_matches:
+                                        max.player_matches.append(player_match)
+                                    player_matches_inner.append(player_match)
+                            except:
+                                pass
                     scores[s].c[l].c[t].c[p].points = helper_to_calculate_points(player_matches_inner)
                     team_matches_inner = list(set(team_matches_inner + player_matches_inner))
                 # print(f"        {team_matches_inner}")
@@ -985,12 +991,18 @@ def get_tags(scores, best_matches, max, probs):
             if probs[s].max >= maxtup[0]:
                 maxtup = (probs[s].max, s)
 
-        if maxtup[0] >= .25:
+        tiers = [(.25, 2), (.275, 1.9), (.30, 1.75), (.325, 1.6), (.35, 1.4), (.375, 1.2), (.4, 1.1)]
+        ii=0
+        while ii != len(tiers) and maxtup[0] > tiers[ii][0]:
+            ii+=1
+        if ii != 0:
+            x = tiers[ii-1][0]
+            y = tiers[ii-1][1]
             good = True
             for s in probs:
                 if s == maxtup[1]:
                     continue
-                if probs[s].max > maxtup[0]/2:
+                if maxtup[0] < probs[s].max*y:
                     good = False
             if good:
                 tags.append(maxtup[1])
@@ -1049,7 +1061,10 @@ def detect_and_correct_all_upper(header):
 
 def categorize(header, summary):
     header = detect_and_correct_all_upper(header)
-    article = header + " " + summary
+    try:
+        article = (header + " " + summary if header[len(header)-1] == '.' else header + ". " + summary)
+    except:
+        article = header + " " + summary
     content = helpers.clean_text(article)
     sentences_tagged = helpers.tokenize_content(content)
 
@@ -1136,13 +1151,10 @@ def categorize(header, summary):
     return tags
 
 def main():
-    # h = "Bennett to return to Georgia for 2022 season"
-    # s = "Georgia quarterback Stetson Bennett will return to the team for the 2022 season, he announced Wednesday."
-
-    h = "Leicester 2-3 Tottenham: Foxes 'gift wrapped' three goals for Spurs - Rodgers."
-    s = "Leicester manager Brendan Rodgers says his side didn't deserve to lose after two injury-time goals snatched a 3-2 victory for Tottenham in the Premier."
-
-    tags = categorize(h, s)
+    pass
+    # h = "chuck"
+    # s = "this is a video game"
+    # tags = categorize(h, s)
     # print(tags)
 
 if __name__ == "__main__":

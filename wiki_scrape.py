@@ -93,6 +93,9 @@ def add_specfic_pages():
     specific_pages['esports|league_of_legends'].append("League of Legends")
     specific_pages['esports|starcraft'] = list()
     specific_pages['esports|starcraft'].append("StarCraft II")
+    specific_pages['esports|halo'] = list()
+    specific_pages['esports|halo'].append("Halo (franchise)")
+
 
 add_specfic_pages()
 
