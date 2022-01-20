@@ -64,5 +64,14 @@
   "mls"                    : ["soccer", "mls"],
   "major league soccer"    : ["soccer", "mls"],
   "serie a"                : ["soccer", "serie_a"],
-  "tennis" : ["tennis", "men"]
+  "tennis" : ["tennis", "men"],
+  "esports"                         : ["esports"],
+  "dota"                            : ["esports", "dota_2"],
+  "dota2"                           : ["esports", "dota_2"],
+  "call of duty"                    : ["esports", "call_of_duty"],
+  "league of legends"               : ["esports", "league_of_legends"],
+  "starcraft"                       : ["esports", "starcraft"],
+  "cs:go"                           : ["esports", "csgo"],
+  "csgo"                            : ["esports", "csgo"],
+  "counter strike global offensive" : ["esports", "csgo"]
 }

@@ -111,7 +111,6 @@ class Field:
         unique = list()
         for cur in self.matched_with:
             u = True
-            print(cur)
             for other in self.matched_with:
                 if cur == other:
                     continue
@@ -264,7 +263,7 @@ def helper_to_calculate_points(l):
     for element in l:
         points += ppg[len(element.split())-1]
     return points
-
+"""
 #returns a dict type with any sports/leagues that are certain matches because a NP matched the file certain_match_words.json
 def get_certain_match_words(all_np, max):
     scores = dict()
@@ -281,6 +280,22 @@ def get_certain_match_words(all_np, max):
                     if l != None and l not in scores[s].c:
                         scores[s].c[l] = League(l, max)
                         scores[s].c[l].certain_match = True
+    return scores
+"""
+#returns a dict type with any sports/leagues that are certain matches because a NP matched the file certain_match_words.json
+def get_certain_match_words(content, max):
+    scores = dict()
+    for word in cmw:
+        if re.search(r"\b" + re.escape(word) + r"\b", content):
+            s = cmw[word][0] #0th spot holds the sport
+            l = (cmw[word][1] if len(cmw[word]) > 1 else None) #the 1st spot may or may not hold a league
+            if s not in scores:
+                scores[s] = Sport(s, max)
+                scores[s].certain_match = True
+            if l != None and l not in scores[s].c:
+                scores[s].c[l] = League(l, max)
+                scores[s].c[l].certain_match = True
+
     return scores
 
 def generate_scores(best_matches, max, scores):
@@ -931,15 +946,54 @@ def get_tags(scores, best_matches, max, probs):
             if len(unique_matches) > 1 and max.sport_points != 0 and scores[s].points/max.sport_points >= .75 and (has_a_unique(scores, s)):
                 tags.append(s)
 
-    #not flushed out completely, use as final resort to tag
-    maxtup = (0,None)
-    if len(tags) == 0:
+    if PRINTDEBUG:
+        print()
+        print(f"******* Orignial tags before applying final selction: {tags} *******")
+
+    if len(tags) > 2:
+        maxtup = (0, None)
+        for s in tags:
+            if probs[s].max >= maxtup[0]:
+                maxtup = (probs[s].max, s)
+        tags = [maxtup[1]]
+
+    #rare scenario, no great solution currently
+    #currently removes 1 of the tags if the other is double the tfidf score
+    if len(tags) == 2:
+        max_index = (0 if probs[tags[0]].max > probs[tags[0]].max else 1)
+        min_index = (max_index + 1)%2
+        if probs[tags[max_index]].max > 2*probs[tags[min_index]].max:
+            tags = [tags[max_index]]
+
+    if len(tags) == 1:
+        cur_s = tags[0]
+        cur_max = (0, None)
         for s in probs:
-            if probs[s].max > .35 and s not in tags: #has to be 35% to tag(modify this number to make more accurate)
-                if probs[s].max > maxtup[0]:
-                    maxtup = (probs[s].max, s)
-        if maxtup[1] != None:
-            tags.append(maxtup[1])
+            if cur_s == s:
+                continue
+            if s in scores:
+                if (scores[s].certain_match == True or scores[s].points > 0) and probs[s].max > probs[cur_s].max*2 and probs[s].max > cur_max[0]:
+                    cur_max = (probs[s].max, s)
+            else:
+                if probs[s].max > probs[cur_s].max*4 and probs[s].max > cur_max[0]:
+                    cur_max = (probs[s].max, s)
+        if cur_max[1] != None:
+            tags = [cur_max[1]]
+    elif len(tags) == 0:
+        maxtup = (0,None)
+        for s in probs:
+            if probs[s].max >= maxtup[0]:
+                maxtup = (probs[s].max, s)
+
+        if maxtup[0] >= .25:
+            good = True
+            for s in probs:
+                if s == maxtup[1]:
+                    continue
+                if probs[s].max > maxtup[0]/2:
+                    good = False
+            if good:
+                tags.append(maxtup[1])
 
     if PRINTDEBUG:
         print("--------------------------------------------")
@@ -1057,7 +1111,7 @@ def categorize(header, summary):
     #max is a class that all things get a common reference to so that most possible points that could have been
     #scored by a sport/league/team/player are tracked and compared against what was scored
     max = MaxPoints()
-    scores = get_certain_match_words(all_np, max)
+    scores = get_certain_match_words(content.lower(), max)
     scores = generate_scores(best_matches, max, scores)
 
     # print_max_scores(max)
@@ -1082,7 +1136,13 @@ def categorize(header, summary):
     return tags
 
 def main():
-    tags = categorize("", "New Liverpool FC Podcast, Video and Written content from The Anfield Wrap. The Best Liverpool Podcast. The Anfield Wrap places you in the pub on a Friday night as we discuss Liverpool’s Christmas fixture list in the Premier League. Neil Atkinson hosts John")
+    # h = "Bennett to return to Georgia for 2022 season"
+    # s = "Georgia quarterback Stetson Bennett will return to the team for the 2022 season, he announced Wednesday."
+
+    h = "Leicester 2-3 Tottenham: Foxes 'gift wrapped' three goals for Spurs - Rodgers."
+    s = "Leicester manager Brendan Rodgers says his side didn't deserve to lose after two injury-time goals snatched a 3-2 victory for Tottenham in the Premier."
+
+    tags = categorize(h, s)
     # print(tags)
 
 if __name__ == "__main__":

@@ -11491,6 +11491,23 @@
         }
       }
     },
+    "esports": {
+      "call_of_duty": {
+
+      },
+      "csgo": {
+
+      },
+      "dota_2": {
+
+      },
+      "league_of_legends": {
+
+      },
+      "starcraft": {
+
+      }
+    },
     "football": {
       "ncaa": {
         "abilene_christian^wildcats": {
@@ -24279,30 +24296,6 @@
             "will_buchanan": {},
             "william_green": {}
           }
-        },
-        "lipscomb^bisons": {
-          "alias": [],
-          "roster": {}
-        },
-        "little_rock^trojans": {
-          "alias": [],
-          "roster": {}
-        },
-        "long_beach^state_beach": {
-          "alias": [],
-          "roster": {}
-        },
-        "long_island_university^sharks": {
-          "alias": [],
-          "roster": {}
-        },
-        "longwood^lancers": {
-          "alias": [],
-          "roster": {}
-        },
-        "louisiana-monroe^warhawks": {
-          "alias": [],
-          "roster": {}
         },
         "louisiana^ragin_cajuns": {
           "alias": [],
@@ -39471,26 +39464,6 @@
             "zamar_wise": {}
           }
         },
-        "umass_lowell^river_hawks": {
-          "alias": [],
-          "roster": {}
-        },
-        "umbc^retrievers": {
-          "alias": [],
-          "roster": {}
-        },
-        "unc_asheville^bulldogs": {
-          "alias": [],
-          "roster": {}
-        },
-        "unc_greensboro^spartans": {
-          "alias": [],
-          "roster": {}
-        },
-        "unc_wilmington^seahawks": {
-          "alias": [],
-          "roster": {}
-        },
         "unlv^rebels": {
           "alias": [],
           "roster": {
@@ -39874,10 +39847,6 @@
             "zion_rucker": {},
             "zoe_roberts": {}
           }
-        },
-        "ut_rio_grande_valley^vaqueros": {
-          "alias": [],
-          "roster": {}
         },
         "utah^utes": {
           "alias": [],
@@ -40624,14 +40593,6 @@
             "wilson_long": {},
             "zach_drevno": {}
           }
-        },
-        "vcu^rams": {
-          "alias": [],
-          "roster": {}
-        },
-        "vermont^catamounts": {
-          "alias": [],
-          "roster": {}
         },
         "villanova^wildcats": {
           "alias": [],
@@ -42458,10 +42419,6 @@
             "zyquan_bessant": {}
           }
         },
-        "winthrop^eagles": {
-          "alias": [],
-          "roster": {}
-        },
         "wisconsin^badgers": {
           "alias": [],
           "roster": {
@@ -42704,10 +42661,6 @@
             "zy_abercrombie": {}
           }
         },
-        "wright_state^raiders": {
-          "alias": [],
-          "roster": {}
-        },
         "wyoming^cowboys": {
           "alias": [],
           "roster": {
@@ -42834,10 +42787,6 @@
             "zach_watts": {},
             "zaire_jackson": {}
           }
-        },
-        "xavier^musketeers": {
-          "alias": [],
-          "roster": {}
         },
         "yale^bulldogs": {
           "alias": [],

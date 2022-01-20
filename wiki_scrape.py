@@ -83,7 +83,16 @@ def add_specfic_pages():
     specific_pages['hockey|ncaa'] = list()
     specific_pages['hockey|ncaa'].append("college ice hockey")
 
-
+    specific_pages['esports|call_of_duty'] = list()
+    specific_pages['esports|call_of_duty'].append("Call of Duty")
+    specific_pages['esports|csgo'] = list()
+    specific_pages['esports|csgo'].append("Counter-Strike: Global Offensive")
+    specific_pages['esports|dota_2'] = list()
+    specific_pages['esports|dota_2'].append("Dotaa 2")
+    specific_pages['esports|league_of_legends'] = list()
+    specific_pages['esports|league_of_legends'].append("League of Legends")
+    specific_pages['esports|starcraft'] = list()
+    specific_pages['esports|starcraft'].append("StarCraft II")
 
 add_specfic_pages()
 
