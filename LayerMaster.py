@@ -21,10 +21,10 @@ cmw = dict()
 nouns = ['unigram', 'bigram', 'trigram']
 H_TOK = "<H><H>"
 A_TOK = "<A><A>"
-PRINTDEBUG = False
-# PRINTDEBUG = True
-PRINTDEBUGDEEPER = False
-# PRINTDEBUGDEEPER = True
+# PRINTDEBUG = False
+PRINTDEBUG = True
+# PRINTDEBUGDEEPER = False
+PRINTDEBUGDEEPER = True
 
 
 
@@ -1152,10 +1152,10 @@ def categorize(header, summary):
 
 def main():
     pass
-    # h = "chuck"
-    # s = "this is a video game"
-    # tags = categorize(h, s)
-    # print(tags)
+    h = "Seeking deal, Cook sits out Braves' practice: 'Just business'"
+    s = "Fielder did not participate in practice"
+    tags = categorize(h, s)
+    print(tags)
 
 if __name__ == "__main__":
     main()
