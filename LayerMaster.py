@@ -1218,6 +1218,11 @@ def main():
         {
             "h": "Alabama crushes Ohio State in National Championship game",
             "s": "Crimson Tide quarterback throws for 400 yards in 45-24 rout"
+        },
+        # This shouldn't match with anything
+        {
+            "h": "This is a test",
+            "s": "I really hope this doesn't match with anything even though I say the word ball"
         }
     ]
 
