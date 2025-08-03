@@ -334,19 +334,55 @@ def get_tags(scores, best_matches, max_points, tfidf_probs):
 
 ### Threshold Application
 
-From debug output, the final selection process:
-```
-******* Original tags before applying final selection: ['football'] *******
-SPORT max points:  8
-LEAGUE max points: 8  
-TEAM max points:   8
-PLAYER max points: 4
+The system uses a **dual-path classification strategy**:
+
+#### Path 1: Entity-Based Classification (Preferred)
+When entities (teams, players, events) are recognized:
+```python
+# Requires 75% confidence and unique matches
+if scores[sport].points/max.sport_points >= 0.75 and has_unique_matches:
+    classify_as(sport)
 ```
 
-The system selects tags based on:
-1. **Confidence Thresholds**: Minimum point requirements
-2. **Relative Scoring**: Comparison against maximum possible points
-3. **TF-IDF Validation**: Statistical backing for exact matches
+#### Path 2: TF-IDF-Only Classification (Fallback)
+When no entities are found, uses **tiered threshold system**:
+
+```python
+# Tiered thresholds: (min_score, required_margin)
+tiers = [(.25, 1.8), (.275, 1.7), (.30, 1.45), (.325, 1.4), (.35, 1.3), (.375, 1.2), (.4, 1.1)]
+
+# Logic: Top sport must beat all others by required margin
+if top_score >= threshold and top_score >= (second_best * margin):
+    classify_as(top_sport)
+```
+
+#### Tiered Threshold Logic
+
+**Higher TF-IDF scores require smaller margins** due to increased statistical confidence:
+
+| TF-IDF Score | Required Margin | Example |
+|--------------|----------------|---------|
+| 0.25-0.275   | 1.8x          | 0.27 vs 0.15 ✅ |
+| 0.275-0.30   | 1.7x          | 0.28 vs 0.17 ✅ |
+| 0.30-0.325   | 1.45x         | 0.31 vs 0.21 ✅ |
+| 0.325+       | 1.4x or less  | High confidence |
+
+**Example Applications:**
+```
+Esports Example:
+- Esports: 0.278, Soccer: 0.142
+- Ratio: 0.278 / 0.142 = 1.96
+- Required: 1.7x (tier 0.275-0.30)
+- Result: ✅ PASS (1.96 > 1.7)
+
+Soccer Example:  
+- Soccer: 0.301, Tennis: 0.203
+- Ratio: 0.301 / 0.203 = 1.48
+- Required: 1.45x (tier 0.30-0.325)
+- Result: ✅ PASS (1.48 > 1.45)
+```
+
+This prevents false positives while allowing clear statistical winners to be classified even without entity recognition.
 
 ## Example Classification Walkthrough
 

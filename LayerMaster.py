@@ -21,10 +21,10 @@ cmw = dict()
 nouns = ['unigram', 'bigram', 'trigram']
 H_TOK = "<H><H>"
 A_TOK = "<A><A>"
-# PRINTDEBUG = False
-PRINTDEBUG = True
-# PRINTDEBUGDEEPER = False
-PRINTDEBUGDEEPER = True
+PRINTDEBUG = False
+# PRINTDEBUG = True
+PRINTDEBUGDEEPER = False
+# PRINTDEBUGDEEPER = True
 
 
 
@@ -986,24 +986,40 @@ def get_tags(scores, best_matches, max, probs):
         if cur_max[1] != None:
             tags = [cur_max[1]]
     elif len(tags) == 0:
+        # No entity matches found - rely purely on TF-IDF classification
+        # Find the sport with highest TF-IDF probability
         maxtup = (0,None)
         for s in probs:
             if probs[s].max >= maxtup[0]:
                 maxtup = (probs[s].max, s)
 
-        tiers = [(.25, 2), (.275, 1.9), (.30, 1.75), (.325, 1.6), (.35, 1.4), (.375, 1.2), (.4, 1.1)]
+        # Tiered threshold system for TF-IDF-only classification
+        # Format: (minimum_score, required_margin_multiplier)
+        # Logic: Top sport must be X times higher than any other sport to be classified
+        # Higher TF-IDF scores require smaller margins due to increased confidence
+        # Prevents false positives while allowing clear statistical winners
+        tiers = [(.25, 1.8), (.275, 1.7), (.30, 1.45), (.325, 1.4), (.35, 1.3), (.375, 1.2), (.4, 1.1)]
+        
+        # Find applicable tier based on top sport's TF-IDF score
         ii=0
         while ii != len(tiers) and maxtup[0] > tiers[ii][0]:
             ii+=1
-        if ii != 0:
-            x = tiers[ii-1][0]
-            y = tiers[ii-1][1]
+        
+        if ii != 0:  # If score meets minimum threshold
+            x = tiers[ii-1][0]  # Minimum score threshold
+            y = tiers[ii-1][1]  # Required margin multiplier
             good = True
+            
+            # Check if top sport beats all others by required margin
             for s in probs:
-                if s == maxtup[1]:
+                if s == maxtup[1]:  # Skip the top sport itself
                     continue
-                if maxtup[0] < probs[s].max*y:
+                # If any sport is too close (within margin), reject classification
+                if maxtup[0] < probs[s].max * y:
                     good = False
+                    break
+            
+            # Only classify if top sport clearly dominates
             if good:
                 tags.append(maxtup[1])
 
@@ -1151,11 +1167,67 @@ def categorize(header, summary):
     return tags
 
 def main():
-    pass
-    h = "Seeking deal, Cook sits out Braves' practice: 'Just business'"
-    s = "Fielder did not participate in practice"
-    tags = categorize(h, s)
-    print(tags)
+    # List of test data (header, summary) pairs for different sports
+    test_data = [
+        # Baseball
+        {
+            "h": "Seeking deal, Cook sits out Braves' practice: 'Just business'",
+            "s": "Fielder did not participate in practice as contract negotiations continue"
+        },
+        # Football (NFL)
+        {
+            "h": "Mahomes throws 4 TDs as Chiefs dominate in season opener",
+            "s": "Kansas City quarterback leads team to 38-20 victory over rivals"
+        },
+        # Basketball (NBA)
+        {
+            "h": "Lakers secure playoff spot with overtime thriller",
+            "s": "LeBron's 40-point performance seals crucial win against Clippers"
+        },
+        # Soccer
+        {
+            "h": "Messi scores stunning free kick in Champions League semifinal",
+            "s": "Barcelona advances to final after 3-2 aggregate victory"
+        },
+        # Hockey
+        {
+            "h": "Ovechkin hits 800 career goals in Capitals win",
+            "s": "Russian superstar reaches milestone in 4-1 victory over Rangers"
+        },
+        # Golf
+        {
+            "h": "Tiger Woods makes incredible comeback to win Masters",
+            "s": "After years of injuries, golf legend claims 5th green jacket"
+        },
+        # Tennis
+        {
+            "h": "Djokovic wins record-breaking 23rd Grand Slam at French Open",
+            "s": "Serbian star surpasses Nadal with straight-sets victory"
+        },
+        # Fighting (MMA)
+        {
+            "h": "UFC 300: Jones retains heavyweight title in controversial decision",
+            "s": "Champion wins split decision after 5-round war with challenger"
+        },
+        # Esports (League of Legends)
+        {
+            "h": "T1 sweeps Gen.G to claim Worlds championship",
+            "s": "Faker wins 4th Summoner's Cup in dominant performance"
+        },
+        # Football (NCAA)
+        {
+            "h": "Alabama crushes Ohio State in National Championship game",
+            "s": "Crimson Tide quarterback throws for 400 yards in 45-24 rout"
+        }
+    ]
+
+    # Loop through test data and categorize each example
+    for i, example in enumerate(test_data, 1):
+        print(f"\nExample {i}:")
+        print(f"Header: {example['h']}")
+        print(f"Summary: {example['s']}")
+        tags = categorize(example['h'], example['s'])
+        print(f"Category: {tags}")
 
 if __name__ == "__main__":
     main()
