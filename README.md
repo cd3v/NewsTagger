@@ -1,6 +1,6 @@
 # NewsTagger: Advanced Sports News Classification System
 
-A sophisticated hierarchical sports news classification system that combines TF-IDF statistical analysis with exact entity matching to automatically categorize sports articles with high precision and interpretability.
+A sophisticated hierarchical sports news classification system that combines custom lexical search statistical analysis with exact entity matching to automatically categorize sports articles with high precision and interpretability.
 
 ## Quick Start
 
